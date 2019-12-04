@@ -19,13 +19,20 @@ Page({
     socketOpen: false,            //声明websocket的打开状态
     voiceStatus: false,           //声明录音的状态
     messageList: [],              //声明接收信息列表
+    webSocketSelect:false,        //声明websocketIp的连接选择
+    webSocketIp:"192.168.137.1",   //设置websocket的连接ip
+    webSocketIpInput:null,        //输入websocket的ip值 
   },
 
   getWebsocket: function () {
+    //获取webSocketIp
+    let webSocketIp = this.data.webSocketIp;
+    let wxUrl = 'ws://' + webSocketIp+':8898';
     wx.connectSocket({
       //url: 'ws://192.168.43.243:8898',
       //url: 'ws://127.0.0.1:8898',
-      url: 'ws://192.168.137.1:8898',
+      //url: 'ws://192.168.137.1:8898',
+      url: wxUrl,
       success: (res) => {
         console.log("socket连接成功")
         console.log(res)
@@ -39,6 +46,10 @@ Page({
       fail: (err) => {
         console.log("socket连接失败")
         console.log(err)
+        this.setData({
+          showSocketButton: true,
+          websocketStatus: this.data.statusList[1],
+        })       
       }
     })
 
@@ -70,6 +81,32 @@ Page({
     }
   },
 
+  //更改websocketIp的输入
+  switchChange:function(e){
+    let status = e.detail.value;
+    console.log(status);
+    //赋值于webSocketSelect
+    this.setData({
+      webSocketSelect: status
+    })
+    //当status变为false时,将webSocketIp变为默认值
+    if(status == false){
+      this.setData({
+        webSocketIp: "192.168.137.1"
+      })
+      console.log(this.data.webSocketIp)
+    }
+  },
+
+  //获取websocketIp的输入值
+  bindKeyInput:function(e){
+    let value = e.detail.value;
+    console.log(value);
+    //赋值于websocketIp
+    this.setData({
+      webSocketIp: value
+    })
+  },
 
   /**
    * 生命周期函数--监听页面加载
@@ -81,8 +118,9 @@ Page({
     })
 
     console.log(this.data.userInfo)
-    //在登陆进来后触发连接socket
-    this.getWebsocket()
+
+    //在登陆进来后触发连接socket(改为点击链接)))
+    //this.getWebsocket()
 
     //监控微信同声传译
     manager.onRecognize = function (res) {

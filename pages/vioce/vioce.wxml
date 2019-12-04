@@ -17,9 +17,18 @@
    
   </view>
   <view class="usermotto">
+    <view>
+      <text>是否更改wsIp：</text>
+      <switch bindchange="switchChange"/>
+    </view>
+    <view wx:if="{{webSocketSelect}}">
+      <text>输入wsIp：</text>
+      <input bindinput="bindKeyInput" placeholder="输入需要连接的wsIp"/>
+    </view>
     <text class="user-motto">连接状态：{{websocketStatus}}</text>
+    <button wx:if="{{showSocketButton}}" bindtap="getWebsocket">连接websocket</button>
     <button type="primary" bindtap="getVoice" >
-      控制面板
+      输入声音
     </button>
 
     <view>
